@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import * as XLSX from "xlsx";
+
 import { supabase } from "@/lib/supabase";
 
 type SiparisUrun = { urunAdi: string; marka: string; miktar: number; olcu: string; birimFiyat: number; toplam: number };
@@ -144,8 +144,9 @@ export default function SatinAlmaPage() {
   };
 
 
- const handleExcel = () => {
+ const handleExcel = async () => {
  if (satirlar.length === 0) return;
+ const XLSX = await import("xlsx");
  const rows = satirlar.map((u) => ({
  "Ürün Adı": u.urunAdi, "Marka": u.marka || "-", "Ölçü": u.olcu,
  "Liste Miktarı": u.listeMiktar, "Depoda": u.depodaMiktar,

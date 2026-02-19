@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import * as XLSX from "xlsx";
+
 import { supabase } from "@/lib/supabase";
 
 type Urun = { id: string; urunAdi: string; marka: string; fiyat: number; olcu: string; kategori: string; stok: number };
@@ -186,9 +186,10 @@ export default function AlisverisListeleriPage() {
     bildirimGoster("basari", `${secilenHafta} listesi kaydedildi!`);
   };
 
-  const handleExcelIndir = (dersId: string) => {
+  const handleExcelIndir = async (dersId: string) => {
     const dl = dersListeleri[dersId];
     if (!dl) return;
+    const XLSX = await import("xlsx");
     const wb = XLSX.utils.book_new();
     HAFTALAR.forEach((hafta) => {
       const urunlerHafta = dl.haftalar[hafta] || [];
@@ -247,10 +248,11 @@ export default function AlisverisListeleriPage() {
   };
 
   // ── Şablon indir ──────────────────────────────────────────────────────────
-  const handleSablonIndir = (dersId: string) => {
+  const handleSablonIndir = async (dersId: string) => {
     const ders = atananDersler.find((d) => d.id === dersId);
     if (!ders) return;
 
+    const XLSX = await import("xlsx");
     const wb = XLSX.utils.book_new();
 
     HAFTALAR.forEach((hafta) => {
@@ -281,6 +283,7 @@ export default function AlisverisListeleriPage() {
     setSablonYukleniyor((prev) => ({ ...prev, [dersId]: true }));
     try {
       const buffer = await dosya.arrayBuffer();
+      const XLSX = await import("xlsx");
       const wb = XLSX.read(buffer, { type: "array" });
 
       for (const hafta of HAFTALAR) {
@@ -381,6 +384,7 @@ export default function AlisverisListeleriPage() {
 
     try {
       const data = await yuklemeDosyasi.arrayBuffer();
+      const XLSX = await import("xlsx");
       const workbook = XLSX.read(data, { type: 'array' });
 
       // Assume sheets are named after tables: 'urunler', 'dersler', etc.
@@ -445,6 +449,7 @@ export default function AlisverisListeleriPage() {
 
       if (dersError) throw dersError;
 
+      const XLSX = await import("xlsx");
       const workbook = XLSX.utils.book_new();
 
       // Create 'urunler' sheet with real data

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import * as XLSX from "xlsx";
+
 import { supabase } from "@/lib/supabase";
 
 type SiparisUrun = { urunId: string; urunAdi: string; marka: string; miktar: number; olcu: string; birimFiyat: number; toplam: number };
@@ -72,8 +72,9 @@ export default function SiparislerPage() {
  const onaylananSayisi = siparisler.filter((s) => s.durum === "onaylandi").length;
  const teslimSayisi = siparisler.filter((s) => s.durum === "teslim_alindi").length;
 
- const handleExcel = () => {
+ const handleExcel = async () => {
  if (filtrelenmis.length === 0) return;
+ const XLSX = await import("xlsx");
  const rows = filtrelenmis.flatMap((s) => s.urunler.map((u) => ({
  "Öğretmen": s.ogretmenAdi, "Ders": s.dersAdi, "Hafta": s.hafta, "Tarih": s.tarih,
  "Durum": DURUM_LABEL[s.durum] ?? s.durum, "Ürün Adı": u.urunAdi, "Marka": u.marka || "-",

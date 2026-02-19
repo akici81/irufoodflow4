@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import * as XLSX from "xlsx";
+
 import { supabase } from "@/lib/supabase";
 
 export type Urun = {
@@ -57,6 +57,7 @@ export default function UrunHavuzuPage() {
  const reader = new FileReader();
  reader.onload = async (ev) => {
  try {
+ const XLSX = await import("xlsx");
  const wb = XLSX.read(ev.target?.result, { type: "binary" });
  const ws = wb.Sheets[wb.SheetNames[0]];
  const satirlar: any[] = XLSX.utils.sheet_to_json(ws);

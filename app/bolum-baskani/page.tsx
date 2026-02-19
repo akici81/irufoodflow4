@@ -4,7 +4,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import DashboardLayout from "../components/DashboardLayout";
 import { supabase } from "@/lib/supabase";
-import * as XLSX from "xlsx";
+
 
 // Tipler 
 type Ders = { id: string; kod: string; ad: string };
@@ -135,6 +135,7 @@ export default function BolumBaskaniPage() {
  const reader = new FileReader();
  reader.onload = async (ev) => {
  try {
+ const XLSX = await import("xlsx");
  const wb = XLSX.read(ev.target?.result, { type: "binary" });
  const ws = wb.Sheets[wb.SheetNames[0]];
  const satirlar: any[] = XLSX.utils.sheet_to_json(ws);
@@ -153,6 +154,7 @@ export default function BolumBaskaniPage() {
  const ogretmen = ogretmenler.find((o) => o.id === ogretmenId); if (!ogretmen) return;
  setListeYukleniyor(true);
  const { data: sipData } = await supabase.from("siparisler").select("*").eq("ogretmen_id", ogretmenId);
+ const XLSX = await import("xlsx");
  const wb = XLSX.utils.book_new();
  for (const dersId of (ogretmen.dersler || [])) {
  const ders = dersler.find((d) => d.id === dersId); if (!ders) continue;
