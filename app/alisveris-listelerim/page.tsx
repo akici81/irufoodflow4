@@ -522,7 +522,7 @@ export default function AlisverisListeleriPage() {
                 <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
                   <h2 className="font-semibold text-gray-800 text-sm">Urun Havuzu — {secilenHafta}</h2>
                   <input value={aramaMetni} onChange={(e) => setAramaMetni(e.target.value)} placeholder="Urun ara..."
-                    className="border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 w-48" />
+                    className="border border-gray-200 rounded-xl px-4 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-red-500 w-48" />
                 </div>
 
                 <div className="mx-4 mt-4 mb-1 bg-blue-50 border border-blue-100 rounded-xl px-4 py-3">
