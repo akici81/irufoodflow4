@@ -23,6 +23,7 @@ const ROLE_MENUS: Record<string, { name: string; path: string }[]> = {
  ],
  ogretmen: [
  { name: " Ana Sayfa", path: "/ogretmen" },
+ { name: " Ürün Havuzu", path: "/urun-havuzu" },
  { name: " Alışveriş Listelerim", path: "/alisveris-listelerim" },
  { name: " Siparişlerim", path: "/siparislerim" },
  { name: " Talep Oluştur", path: "/talep" },
