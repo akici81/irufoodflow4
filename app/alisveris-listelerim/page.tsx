@@ -41,10 +41,10 @@ export default function AlisverisListeleriPage() {
       const { data: tumDersler } = await supabase.from("dersler").select("*").order("kod");
       const atanan = (tumDersler || []).filter((d: Ders) => (k.dersler || []).includes(d.id));
       setAtananDersler(atanan);
-      const { data: urunData } = await supabase.from("urunler").select("*").order("urun_adi");
+      const { data: urunData } = await supabase.from("urunler").select("*");
       setUrunler((urunData || []).map((u: any) => ({
-        id: u.id, urunAdi: u.urun_adi, marka: u.marka, fiyat: u.fiyat, olcu: u.olcu, kategori: u.kategori, stok: u.stok ?? 0,
-      })));
+      id: u.id, urunAdi: u.urun_adi, marka: u.marka, fiyat: u.fiyat, olcu: u.olcu, kategori: u.kategori, stok: u.stok ?? 0,
+      })).sort((a, b) => a.urunAdi.localeCompare(b.urunAdi, "tr")));
       const { data: siparisler } = await supabase.from("siparisler").select("*").eq("ogretmen_id", id);
       const listeler: Record<string, DersListesi> = {};
       (siparisler || []).forEach((s: any) => {
