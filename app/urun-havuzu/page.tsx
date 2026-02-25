@@ -442,7 +442,7 @@ export default function UrunHavuzuPage() {
       )}
 
       <div className="text-center text-xs text-gray-300 py-4">
-        Ürün Havuzu: {urunler.length} | Görüntülenen: {filtrelenmis.length}
+        Ürün Havuzu: {urunler.length} | Görüntülenen: {filtrelenmis.length} | v2.1
       </div>
     </DashboardLayout>
   );
