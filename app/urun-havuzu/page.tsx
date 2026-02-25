@@ -52,7 +52,7 @@ export default function UrunHavuzuPage() {
   const fetchUrunler = async () => {
     setYukleniyor(true);
     const { data } = await supabase.from("urunler").select("*");
-    setUrunler((data || []).map((u: any) => ({
+    const mapped = (data || []).map((u: any) => ({
       id: u.id,
       urunAdi: u.urun_adi,
       marka: u.marka,
@@ -63,7 +63,15 @@ export default function UrunHavuzuPage() {
       stok: u.stok,
       kod: u.kod,
       notlar: u.notlar,
-    })).sort((a, b) => a.urunAdi.toLocaleLowerCase("tr").localeCompare(b.urunAdi.toLocaleLowerCase("tr"), "tr")));
+    }));
+    mapped.sort((a: Urun, b: Urun) => {
+      const aName = a.urunAdi.toLocaleLowerCase("tr");
+      const bName = b.urunAdi.toLocaleLowerCase("tr");
+      if (aName < bName) return -1;
+      if (aName > bName) return 1;
+      return 0;
+    });
+    setUrunler(mapped);
     setYukleniyor(false);
   };
 
@@ -208,7 +216,11 @@ export default function UrunHavuzuPage() {
     const aVal = a[alan];
     const bVal = b[alan];
     if (typeof aVal === "number" && typeof bVal === "number") return (aVal - bVal) * carpan;
-    return String(aVal ?? "").toLocaleLowerCase("tr").localeCompare(String(bVal ?? "").toLocaleLowerCase("tr"), "tr") * carpan;
+    const aStr = String(aVal ?? "").toLocaleLowerCase("tr");
+    const bStr = String(bVal ?? "").toLocaleLowerCase("tr");
+    if (aStr < bStr) return -1 * carpan;
+    if (aStr > bStr) return 1 * carpan;
+    return 0;
   });
 
   return (
