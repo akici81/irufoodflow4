@@ -16,6 +16,8 @@ export type Urun = {
   notlar: string;
 };
 
+const trCollator = new Intl.Collator("tr", { sensitivity: "base", numeric: true });
+
 const OLCU_SECENEKLERI = ["Kg", "L", "Paket", "Adet", "G", "Ml", "Kutu"];
 
 const BOSH_FORM: Omit<Urun, "id"> = {
@@ -64,13 +66,7 @@ export default function UrunHavuzuPage() {
       kod: u.kod,
       notlar: u.notlar,
     }));
-    mapped.sort((a: Urun, b: Urun) => {
-      const aName = a.urunAdi.toLocaleLowerCase("tr");
-      const bName = b.urunAdi.toLocaleLowerCase("tr");
-      if (aName < bName) return -1;
-      if (aName > bName) return 1;
-      return 0;
-    });
+    mapped.sort((a: Urun, b: Urun) => trCollator.compare(a.urunAdi, b.urunAdi));
     setUrunler(mapped);
     setYukleniyor(false);
   };
@@ -216,11 +212,7 @@ export default function UrunHavuzuPage() {
     const aVal = a[alan];
     const bVal = b[alan];
     if (typeof aVal === "number" && typeof bVal === "number") return (aVal - bVal) * carpan;
-    const aStr = String(aVal ?? "").toLocaleLowerCase("tr");
-    const bStr = String(bVal ?? "").toLocaleLowerCase("tr");
-    if (aStr < bStr) return -1 * carpan;
-    if (aStr > bStr) return 1 * carpan;
-    return 0;
+    return trCollator.compare(String(aVal ?? ""), String(bVal ?? "")) * carpan;
   });
 
   return (
@@ -442,7 +434,7 @@ export default function UrunHavuzuPage() {
       )}
 
       <div className="text-center text-xs text-gray-300 py-4">
-        Ürün Havuzu: {urunler.length} | Görüntülenen: {filtrelenmis.length} | v2.1
+        Ürün Havuzu: {urunler.length} | Görüntülenen: {filtrelenmis.length} | v2.2
       </div>
     </DashboardLayout>
   );
