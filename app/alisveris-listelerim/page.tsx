@@ -238,7 +238,12 @@ export default function AlisverisListeleriPage() {
           html += `<tr><td>${i + 1}</td><td>${u.urunAdi}</td><td>${u.marka || "-"}</td><td>${u.miktar}</td><td>${u.olcu}</td><td>${u.toplam > 0 ? u.toplam.toFixed(2) + " TL" : "-"}</td></tr>`;
         });
       }
-      html += `</tbody></table></div>`;
+      html += `</tbody></table>`;
+      const haftaToplamTutar = urunlerHafta.reduce((acc, u) => acc + u.toplam, 0);
+      if (urunlerHafta.length > 0) {
+        html += `<div style="text-align:right;margin-top:8px;padding:8px 12px;border-top:2px solid #8B0000;font-size:12px;font-weight:bold;color:#8B0000;">${hafta} Toplam: ${haftaToplamTutar.toLocaleString("tr-TR", { minimumFractionDigits: 2 })} TL</div>`;
+      }
+      html += `</div>`;
     });
     html += `</body></html>`;
     const win = window.open("", "_blank");
