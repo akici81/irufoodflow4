@@ -63,7 +63,7 @@ export default function UrunHavuzuPage() {
       stok: u.stok,
       kod: u.kod,
       notlar: u.notlar,
-    })).sort((a, b) => a.urunAdi.localeCompare(b.urunAdi, "tr")));
+    })).sort((a, b) => a.urunAdi.localeCompare(b.urunAdi, "tr", { sensitivity: "base" })));
     setYukleniyor(false);
   };
 
@@ -208,7 +208,7 @@ export default function UrunHavuzuPage() {
     const aVal = a[alan];
     const bVal = b[alan];
     if (typeof aVal === "number" && typeof bVal === "number") return (aVal - bVal) * carpan;
-    return String(aVal ?? "").localeCompare(String(bVal ?? ""), "tr") * carpan;
+    return String(aVal ?? "").localeCompare(String(bVal ?? ""), "tr", { sensitivity: "base" }) * carpan;
   });
 
   return (
