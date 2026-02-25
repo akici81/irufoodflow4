@@ -42,6 +42,7 @@ export default function UrunHavuzuPage() {
   const [yukleniyor, setYukleniyor] = useState(true);
   const [aktifRol, setAktifRol] = useState("");
   const dosyaRef = useRef<HTMLInputElement>(null);
+  const [siralama, setSiralama] = useState<{ alan: string; yon: "asc" | "desc" }>({ alan: "urunAdi", yon: "asc" });
 
   useEffect(() => {
     setAktifRol(localStorage.getItem("role") || "");
@@ -154,8 +155,44 @@ export default function UrunHavuzuPage() {
     fetchUrunler();
   };
 
-  const kategoriler = ["Tümü", ...Array.from(new Set(urunler.map((u) => u.kategori).filter(Boolean))).sort()];
-  const markalar = ["Tümü", ...Array.from(new Set(urunler.map((u) => u.marka).filter(Boolean))).sort()];
+  const kategoriler = ["Tümü", ...Array.from(new Set(urunler.map((u) => u.kategori).filter(Boolean))).sort((a, b) => a.localeCompare(b, "tr"))];
+  const markalar = ["Tümü", ...Array.from(new Set(urunler.map((u) => u.marka).filter(Boolean))).sort((a, b) => a.localeCompare(b, "tr"))];
+
+  const KATEGORI_RENKLERI: Record<string, string> = {};
+  const RENK_PALETI = [
+    "bg-red-50 text-red-700",
+    "bg-blue-50 text-blue-700",
+    "bg-emerald-50 text-emerald-700",
+    "bg-amber-50 text-amber-700",
+    "bg-purple-50 text-purple-700",
+    "bg-pink-50 text-pink-700",
+    "bg-cyan-50 text-cyan-700",
+    "bg-orange-50 text-orange-700",
+    "bg-lime-50 text-lime-700",
+    "bg-violet-50 text-violet-700",
+    "bg-teal-50 text-teal-700",
+    "bg-rose-50 text-rose-700",
+    "bg-indigo-50 text-indigo-700",
+    "bg-sky-50 text-sky-700",
+    "bg-fuchsia-50 text-fuchsia-700",
+    "bg-yellow-50 text-yellow-700",
+  ];
+  kategoriler.filter((k) => k !== "Tümü").forEach((k, i) => {
+    KATEGORI_RENKLERI[k] = RENK_PALETI[i % RENK_PALETI.length];
+  });
+
+  const kategoriRenk = (kategori: string) => KATEGORI_RENKLERI[kategori] || "bg-gray-100 text-gray-600";
+
+  const handleSirala = (alan: string) => {
+    setSiralama((prev) =>
+      prev.alan === alan ? { alan, yon: prev.yon === "asc" ? "desc" : "asc" } : { alan, yon: "asc" }
+    );
+  };
+
+  const siralamaOku = (alan: string) => {
+    if (siralama.alan !== alan) return "↕";
+    return siralama.yon === "asc" ? "↑" : "↓";
+  };
 
   const filtrelenmis = urunler.filter((u) => {
     const aramaUygun = !aramaMetni ||
@@ -165,6 +202,13 @@ export default function UrunHavuzuPage() {
     const kategoriUygun = secilenKategori === "Tümü" || u.kategori === secilenKategori;
     const markaUygun = secilenMarka === "Tümü" || u.marka === secilenMarka;
     return aramaUygun && kategoriUygun && markaUygun;
+  }).sort((a, b) => {
+    const alan = siralama.alan as keyof Urun;
+    const carpan = siralama.yon === "asc" ? 1 : -1;
+    const aVal = a[alan];
+    const bVal = b[alan];
+    if (typeof aVal === "number" && typeof bVal === "number") return (aVal - bVal) * carpan;
+    return String(aVal ?? "").localeCompare(String(bVal ?? ""), "tr") * carpan;
   });
 
   return (
@@ -234,8 +278,31 @@ export default function UrunHavuzuPage() {
             <table className="w-full text-sm">
               <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
                 <tr>
-                  {["Ürün Adı", "Marka", "Fiyat", "Ölçü", "Kategori", "Market", "Stok", "Kod", ""].map((h) => (
-                    <th key={h} className="px-4 py-3 text-left font-medium">{h}</th>
+                  {[
+                    { label: "Ürün Adı", alan: "urunAdi" },
+                    { label: "Marka", alan: "marka" },
+                    { label: "Fiyat", alan: "fiyat" },
+                    { label: "Ölçü", alan: "olcu" },
+                    { label: "Kategori", alan: "kategori" },
+                    { label: "Market", alan: "market" },
+                    { label: "Stok", alan: "stok" },
+                    { label: "Kod", alan: "kod" },
+                    { label: "", alan: "" },
+                  ].map((h) => (
+                    <th
+                      key={h.label + h.alan}
+                      className={`px-4 py-3 text-left font-medium ${h.alan ? "cursor-pointer select-none hover:text-gray-700 transition" : ""}`}
+                      onClick={() => h.alan && handleSirala(h.alan)}
+                    >
+                      <span className="inline-flex items-center gap-1">
+                        {h.label}
+                        {h.alan && (
+                          <span className={`text-xs ${siralama.alan === h.alan ? "text-blue-600 font-bold" : "text-gray-300"}`}>
+                            {siralamaOku(h.alan)}
+                          </span>
+                        )}
+                      </span>
+                    </th>
                   ))}
                 </tr>
               </thead>
@@ -254,7 +321,7 @@ export default function UrunHavuzuPage() {
                     <td className="px-4 py-3 text-gray-500">{u.olcu}</td>
                     <td className="px-4 py-3">
                       {u.kategori
-                        ? <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full text-xs font-medium">{u.kategori}</span>
+                        ? <span className={`${kategoriRenk(u.kategori)} px-2.5 py-0.5 rounded-full text-xs font-medium`}>{u.kategori}</span>
                         : "—"}
                     </td>
                     <td className="px-4 py-3 text-gray-500">{u.market || "—"}</td>
