@@ -51,7 +51,7 @@ export default function UrunHavuzuPage() {
 
   const fetchUrunler = async () => {
     setYukleniyor(true);
-    const { data } = await supabase.from("urunler").select("*").order("urun_adi");
+    const { data } = await supabase.from("urunler").select("*");
     setUrunler((data || []).map((u: any) => ({
       id: u.id,
       urunAdi: u.urun_adi,
@@ -63,7 +63,7 @@ export default function UrunHavuzuPage() {
       stok: u.stok,
       kod: u.kod,
       notlar: u.notlar,
-    })));
+    })).sort((a, b) => a.urunAdi.localeCompare(b.urunAdi, "tr")));
     setYukleniyor(false);
   };
 
