@@ -80,9 +80,23 @@ export default function AlisverisListeleriPage() {
 
   const secilenDersObj = atananDersler.find((d) => d.id === secilenDers);
 
-  const filtreliUrunler = urunler.filter((u) =>
-    !aramaMetni || u.urunAdi.toLowerCase().includes(aramaMetni.toLowerCase()) || u.marka.toLowerCase().includes(aramaMetni.toLowerCase())
-  );
+  const filtreliUrunler = urunler
+    .filter((u) =>
+      !aramaMetni || u.urunAdi.toLowerCase().includes(aramaMetni.toLowerCase()) || u.marka.toLowerCase().includes(aramaMetni.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (!aramaMetni) return a.urunAdi.localeCompare(b.urunAdi, "tr");
+      const q = aramaMetni.toLowerCase();
+      const aAd = a.urunAdi.toLowerCase();
+      const bAd = b.urunAdi.toLowerCase();
+      const aExact = aAd === q;
+      const bExact = bAd === q;
+      if (aExact !== bExact) return aExact ? -1 : 1;
+      const aStarts = aAd.startsWith(q);
+      const bStarts = bAd.startsWith(q);
+      if (aStarts !== bStarts) return aStarts ? -1 : 1;
+      return a.urunAdi.localeCompare(b.urunAdi, "tr");
+    });
 
   const olcuBilgisi = (olcu: string) => {
     const tip = olcu.toLowerCase();
